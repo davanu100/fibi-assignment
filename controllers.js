@@ -1,4 +1,5 @@
 const Image = require('./models');
+const urlMetaData = require('url-metadata');
 
 exports.getImages = (req,res,next) => {
     const offset = req.query.offset;
@@ -36,6 +37,16 @@ exports.postImage = (req,res,next) => {
         name : name,
         type : type
     });
+
+    urlMetaData(url)
+    .then(
+        function(metadata){
+            console.log(metadata);
+        },
+        function(error){
+            console.log(error);
+        }
+    );
 
     image
         .save()
