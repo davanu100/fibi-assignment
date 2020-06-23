@@ -38,15 +38,18 @@ exports.postImage = (req,res,next) => {
         type : type
     });
 
-    urlMetaData(url)
-    .then(
-        function(metadata){
-            console.log(metadata);
-        },
-        function(error){
-            console.log(error);
-        }
-    );
+    // urlMetaData(url)
+    // .then(
+    //     function(metadata){
+    //         console.log(metadata["og:image:type"].toString());
+    //         console.log(metadata["og:image:height"]);
+    //         console.log(metadata["og:image:width"]);
+
+    //     },
+    //     function(error){
+    //         console.log(error);
+    //     }
+    // );
 
     image
         .save()
@@ -56,6 +59,6 @@ exports.postImage = (req,res,next) => {
         .catch(err => console.log(err));
 
     res.status(201).json({
-        image : image
+        image : image,
     });
 };
