@@ -1,5 +1,7 @@
 const Image = require('./models');
 const urlMetaData = require('url-metadata');
+const { collection } = require('./models');
+var request = require('request');
 
 exports.getImages = (req,res,next) => {
     const offset = req.query.offset;
@@ -29,36 +31,35 @@ exports.getImages = (req,res,next) => {
 
 exports.postImage = (req,res,next) => {
     const url = req.body.url;
-    const name = req.body.name;
-    const type = req.body.type;
+const name = req.body.name;
+const type = req.body.type;
 
-    const image = new Image({
-        url : url,
-        name : name,
-        type : type
-    });
+const image = new Image({
+	url : url,
+	name : name,
+	type : type
+});
 
-    // urlMetaData(url)
-    // .then(
-    //     function(metadata){
-    //         console.log(metadata["og:image:type"].toString());
-    //         console.log(metadata["og:image:height"]);
-    //         console.log(metadata["og:image:width"]);
-
-    //     },
-    //     function(error){
-    //         console.log(error);
-    //     }
-    // );
-
-    image
-        .save()
-        .then(result => {
-            console.log("Image Added!!");
-        })
-        .catch(err => console.log(err));
-
-    res.status(201).json({
-        image : image,
-    });
+request({
+	url : url,
+	method : 'HEAD'
+},
+function(err,response,body) {
+    let size = response.headers['content-length'];
+    // console.log(size);
+	let imageType = response.headers['content-type'].split('/')[1];
+	image
+		.save()
+		.then(result => {
+			console.log('Image Added!!');
+			res.status(201).json({
+				image: image,
+				metadata: {
+                    imageType,
+                    size
+                }
+			});
+		})
+		.catch(err => console.log(err));
+});
 };
